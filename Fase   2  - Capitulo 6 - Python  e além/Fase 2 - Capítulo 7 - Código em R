@@ -1,0 +1,111 @@
+#NicolasAntonioSilvaAraujo_RM566307_fase2_cap7
+
+#Análise Exploratória de Dados do Agronegócio
+# Dados sobre produção agrícola por estado e cultura
+
+#OBS: Área = hectare e Produtividade = quilograma por hectare
+
+# 1. Carregando os pacotes necessários
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+# 2. Carregar os dados
+dados <- read_delim("Dados(1).csv", delim = ";", locale = locale(decimal_mark = ","))
+
+# Limpar dados - remover linhas vazias
+dados <- dados %>% filter(!is.na(UF))
+
+# 3. Análise da variável quantitativa: Produtividade
+
+# Medidas de Tendência Central
+media_prod <- mean(dados$Produtividade)
+mediana_prod <- median(dados$Produtividade)
+moda_prod <- as.numeric(names(sort(table(dados$Produtividade), decreasing = TRUE)[1]))
+
+# Medidas de Dispersão
+variancia_prod <- var(dados$Produtividade)
+desvio_padrao_prod <- sd(dados$Produtividade)
+amplitude_prod <- max(dados$Produtividade) - min(dados$Produtividade)
+coef_variacao_prod <- (desvio_padrao_prod / media_prod) * 100
+
+# Medidas Separatrizes
+quartis_prod <- quantile(dados$Produtividade, probs = c(0.25, 0.5, 0.75))
+decis_prod <- quantile(dados$Produtividade, probs = seq(0.1, 0.9, by = 0.1))
+
+# 4. Análise gráfica da variável quantitativa
+
+# hstograma
+hist_prod <- ggplot(dados, aes(x = Produtividade)) +
+  geom_histogram(bins = 15, fill = "steelblue", color = "white") +
+  labs(title = "Distribuição da Produtividade", 
+       x = "Produtividade", 
+       y = "Frequência") +
+  theme_minimal()
+
+# Boxplot
+box_prod <- ggplot(dados, aes(y = Produtividade)) +
+  geom_boxplot(fill = "steelblue") +
+  labs(title = "Boxplot da Produtividade", 
+       y = "Produtividade") +
+  theme_minimal()
+
+# Gráfico de densidade
+dens_prod <- ggplot(dados, aes(x = Produtividade)) +
+  geom_density(fill = "steelblue", alpha = 0.5) +
+  labs(title = "Densidade da Produtividade", 
+       x = "Produtividade", 
+       y = "Densidade") +
+  theme_minimal()
+
+# Exibir gráficos
+grid.arrange(hist_prod, box_prod, dens_prod, ncol = 2)
+
+# 5. Análise da variável qualitativa: Nível de Produtividade
+
+# Gráfico de barras
+bar_nivel <- ggplot(dados, aes(x = `Nivel  de Produtividade`)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Distribuição dos Níveis de Produtividade", 
+       x = "Nível de Produtividade", 
+       y = "Contagem") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Gráfico de pizza
+pie_data <- dados %>% 
+  count(`Nivel  de Produtividade`) %>% 
+  mutate(porcentagem = n / sum(n) * 100,
+         posicao = cumsum(porcentagem) - porcentagem / 2)
+
+pie_nivel <- ggplot(pie_data, aes(x = "", y = porcentagem, fill = `Nivel  de Produtividade`)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  geom_text(aes(y = posicao, label = paste0(round(porcentagem), "%")), 
+            color = "white", size = 4) +
+  labs(title = "Proporção dos Níveis de Produtividade") +
+  theme_void() +
+  theme(legend.position = "right")
+
+# Exibir gráficos
+grid.arrange(bar_nivel, pie_nivel, ncol = 2)
+
+# 6. Exibir medidas resumo
+cat("=== ANÁLISE DA PRODUTIVIDADE ===\n")
+cat("Medidas de Tendência Central:\n")
+cat("Média:", media_prod, "\n")
+cat("Mediana:", mediana_prod, "\n")
+cat("Moda:", moda_prod, "\n\n")
+
+cat("Medidas de Dispersão:\n")
+cat("Variância:", variancia_prod, "\n")
+cat("Desvio Padrão:", desvio_padrao_prod, "\n")
+cat("Amplitude:", amplitude_prod, "\n")
+cat("Coeficiente de Variação:", coef_variacao_prod, "%\n\n")
+
+cat("Medidas Separatrizes:\n")
+cat("Quartis (Q1, Q2, Q3):\n")
+print(quartis_prod)
+cat("\nDecis:\n")
+print(decis_prod)
