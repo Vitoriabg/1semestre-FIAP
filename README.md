@@ -5,7 +5,7 @@
 </p>
 
 <br>
- # 🎓 Projeto-FIAP
+ # 1º semestre-FIAP
 
 Repositório com os projetos desenvolvidos durante o curso de **Inteligência Artificial** na **FIAP**, organizados por fase.  
 Grande parte desses projetos foi desenvolvida em **equipe**, com o objetivo de aplicar conceitos teóricos em desafios práticos de tecnologia, inovação e sustentabilidade.
@@ -47,7 +47,5 @@ Seu propósito é **documentar a jornada de aprendizado** e servir de referênci
 
 ---
 
-## ✨ Autoria
 
-Desenvolvido por **Vitoria Bagatin**  
 📍 Curso de **Inteligência Artificial - FIAP**
